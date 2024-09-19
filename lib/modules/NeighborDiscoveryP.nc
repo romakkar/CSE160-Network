@@ -3,5 +3,7 @@ module NeighborDiscoveryP{
 }
 
 implementation{
-    command void NeighborDiscovery.pass(){}
+    command void NeighborDiscovery.pass(){
+        
+    }
 }

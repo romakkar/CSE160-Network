@@ -1,8 +1,8 @@
 configuration NeighborDiscoveryC{
-    provides interface NeighborDiscovery
+    provides interface NeighborDiscovery;
 }
 
 implementation{
     components  NeighborDiscovery;
-    Flooding =  NeighborDiscoveryP.NeighborDiscovery;
+    NeighborDiscovery =  NeighborDiscoveryP.NeighborDiscovery;
 }
