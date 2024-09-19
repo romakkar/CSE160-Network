@@ -3,6 +3,6 @@ configuration NeighborDiscoveryC{
 }
 
 implementation{
-    components  NeighborDiscovery;
+    components  NeighborDiscoveryP;
     NeighborDiscovery =  NeighborDiscoveryP.NeighborDiscovery;
 }
