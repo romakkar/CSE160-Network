@@ -25,6 +25,11 @@ typedef nx_struct pack{
 	nx_uint8_t payload[PACKET_MAX_PAYLOAD_SIZE];
 }pack;
 
+typedef nx_struct RoutingTableEntry{
+	nx_uint16_t cost;
+    nx_uint16_t nextHop; 
+} RoutingTableEntry;
+
 /*
  * logPack
  * 	Sends packet information to the general channel.

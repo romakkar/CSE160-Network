@@ -25,17 +25,23 @@ module Node{
    
    uses interface Flooding;
    uses interface NeighborDiscovery;
+   uses interface RoutingTable;
+   uses interface Forwarding;
+
+   uses interface Transport;
+	uses interface Queue<socket_t> as SocketQueue;
+	uses interface List<socket_t> as SocketList;
 }
 
 implementation{
    pack sendPackage;
 
    // Prototypes
-   void makePack(pack *Package, uint16_t src, uint16_t dest, uint16_t TTL, uint16_t Protocol, uint16_t seq, uint8_t *payload, uint8_t length);
+   void makePack(pack *Package, uint16_t src, uint16_t dest, uint16_t TTL, uint16_t Protocol, uint16_t seq, void *payload, uint8_t length);
 
    event void Boot.booted(){
       call AMControl.start();
-
+      call NeighborDiscovery.start();
       dbg(GENERAL_CHANNEL, "Booted\n");
    }
 
@@ -61,16 +67,29 @@ implementation{
       return msg;
    }
 
-
-   event void CommandHandler.ping(uint16_t destination, uint8_t *payload){
+   event void CommandHandler.ping(uint16_t destination, void *payload){
       dbg(GENERAL_CHANNEL, "PING EVENT \n");
-      makePack(&sendPackage, TOS_NODE_ID, destination, 0, 0, 0, payload, PACKET_MAX_PAYLOAD_SIZE);
-      call Sender.send(sendPackage, destination);
+      makePack(&sendPackage, TOS_NODE_ID, destination, 0, PROTOCOL_LINKEDLIST, 0, payload, PACKET_MAX_PAYLOAD_SIZE);
+      call Forwarding.send(destination, &sendPackage);
+      // call Sender.send(sendPackage, destination);
+   }
+   
+   event void CommandHandler.flood(int16_t destination, void *payload){
+      dbg(GENERAL_CHANNEL, "FLOOD EVENT\n");
+      makePack(&sendPackage, TOS_NODE_ID, destination, 0, PROTOCOL_FLOOD, 0, payload, PACKET_MAX_PAYLOAD_SIZE);
+      call Flooding.send(destination, &sendPackage);
    }
 
-   event void CommandHandler.printNeighbors(){}
 
-   event void CommandHandler.printRouteTable(){}
+   event void CommandHandler.printNeighbors(){
+      dbg(GENERAL_CHANNEL, "Printing Neighbors\n");
+      call NeighborDiscovery.printNeighbor();
+   }
+
+   event void CommandHandler.printRouteTable(){
+      dbg(GENERAL_CHANNEL, "Printing Route Table\n");
+      call RoutingTable.printTable();
+   }
 
    event void CommandHandler.printLinkState(){}
 
@@ -84,7 +103,7 @@ implementation{
 
    event void CommandHandler.setAppClient(){}
 
-   void makePack(pack *Package, uint16_t src, uint16_t dest, uint16_t TTL, uint16_t protocol, uint16_t seq, uint8_t* payload, uint8_t length){
+   void makePack(pack *Package, uint16_t src, uint16_t dest, uint16_t TTL, uint16_t protocol, uint16_t seq, void* payload, uint8_t length){
       Package->src = src;
       Package->dest = dest;
       Package->TTL = TTL;

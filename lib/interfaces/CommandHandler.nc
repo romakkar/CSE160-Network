@@ -1,6 +1,7 @@
 interface CommandHandler{
    // Events
-   event void ping(uint16_t destination, uint8_t *payload);
+   event void ping(uint16_t destination, void *payload);
+   event void flood(int16_t destination, void *payload);
    event void printNeighbors();
    event void printRouteTable();
    event void printLinkState();

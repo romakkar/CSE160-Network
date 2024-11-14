@@ -36,4 +36,16 @@ implementation {
 
     components NeighborDiscoveryC;
     Node.NeighborDiscovery -> NeighborDiscoveryC;
+
+    components RoutingTableC;
+    Node.RoutingTable -> RoutingTableC;
+
+    components ForwardingC;
+    Node.Forwarding -> ForwardingC;
+
+    components TransportC;
+	Node.Transport -> TransportC.Transport;
+	
+	components new QueueC(socket_t, 30) as SocketQueue;
+	Node.SocketQueue->SocketQueue;
 }
