@@ -13,6 +13,8 @@ class TestSim:
     CMD_PING = 0
     CMD_NEIGHBOR_DUMP = 1
     CMD_ROUTE_DUMP=3
+    CMD_TEST_CLIENT=4
+    CMD_TEST_SERVER=5
     CMD_FLOOD=7
 
     # CHANNELS - see includes/channels.h
@@ -153,9 +155,11 @@ def main():
     s.addChannel(s.TRANSPORT_CHANNEL);
 
     s.runTime(20);
-    s.ping(1, 9, "Hello, World");
-    s.runTime(100);
-    s.routeDMP(3);
+    
+    s.testServer(1);
+    s.runTime(60);
+
+    s.testClient(4);
     s.runTime(10);
     
     s.runTime(10);
