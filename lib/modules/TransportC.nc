@@ -5,30 +5,18 @@ configuration TransportC{
 }
 
 implementation{
-	components TransportP;
+	components TransportP, ForwardingC; 
 	components new TimerMilliC() as T_timer;
-	TransportP.T_timer -> T_timer;
-
-	//components new TimerMilliC() as packetTimer;
-	//TransportP.packetTimer -> packetTimer;
-
-	components new SimpleSendC(AM_TRANSPORT);
-	TransportP.SimpleSend -> SimpleSendC;
-
-	components new AMReceiverC(AM_TRANSPORT);
-
-	Transport = TransportP.Transport;
-
-	components RoutingTableC;
-	TransportP.RoutingTable -> RoutingTableC.RoutingTable;
+	TransportP.T_timer -> T_timer;	
 
 	components new ListC(socket_t, 30) as SocketList;
 	TransportP.SocketList -> SocketList;
 
-	components new QueueC(pack, 30) as packQ;
+	components new QueueC(tcp_pack, 10) as packQ;
 	TransportP.packQ -> packQ;
 
-	components ForwardingC;
-	TransportP.Forwarding -> ForwardingC.Forwarding;
 	
+    Transport = TransportP.Transport;
+
+	TransportP.Forwarding -> ForwardingC; 
 }

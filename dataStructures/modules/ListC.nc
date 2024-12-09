@@ -77,6 +77,20 @@ implementation{
 		return container[size];
 	}
 
+	command void List.remove(uint16_t position) {
+		// Check if the position is valid
+		if (position < size) {
+			uint16_t i;
+
+			// Shift all elements after the position to the left
+			for (i = position; i < size - 1; i++) {
+				container[i] = container[i + 1];
+			}
+			// Decrease the size of the list
+			size--;
+		}
+	}
+
 	command bool List.isEmpty(){
 		if(size == 0)
 			return TRUE;

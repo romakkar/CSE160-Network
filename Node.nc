@@ -70,7 +70,7 @@ implementation{
    event void CommandHandler.ping(uint16_t destination, void *payload){
       dbg(GENERAL_CHANNEL, "PING EVENT \n");
       makePack(&sendPackage, TOS_NODE_ID, destination, 0, PROTOCOL_LINKEDLIST, 0, payload, PACKET_MAX_PAYLOAD_SIZE);
-      call Forwarding.send(destination, &sendPackage);
+      call Forwarding.send(destination, sendPackage);
       // call Sender.send(sendPackage, destination);
    }
    
@@ -95,9 +95,15 @@ implementation{
 
    event void CommandHandler.printDistanceVector(){}
 
-   event void CommandHandler.setTestServer(){}
+   event void CommandHandler.setTestServer(){
+      dbg(GENERAL_CHANNEL, "TRANSPORT EVENT\n");
+      call Transport.setTestServer();
+   }
 
-   event void CommandHandler.setTestClient(){}
+   event void CommandHandler.setTestClient(uint8_t destination){
+      dbg(GENERAL_CHANNEL, "TRANSPORT EVENT\n");
+      call Transport.setTestClient(destination);
+   }
 
    event void CommandHandler.setAppServer(){}
 

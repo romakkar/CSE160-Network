@@ -131,8 +131,8 @@ class TestSim:
     def routeDMP(self, destination):
         self.sendCMD(self.CMD_ROUTE_DUMP, destination, "routing command");
     
-    def testClient(self, destination):
-        self.sendCMD(self.CMD_TEST_CLIENT, destination, "client");
+    def testClient(self, src, destination):
+        self.sendCMD(self.CMD_TEST_CLIENT, src, "{0}{1}".format(chr(destination),"client"));
 	
     def testServer(self, destination):
         self.sendCMD(self.CMD_TEST_SERVER, destination, "server");
@@ -144,7 +144,7 @@ class TestSim:
 def main():
     s = TestSim();
     s.runTime(10);
-    s.loadTopo("example.topo");
+    s.loadTopo("long_line.topo");
     s.loadNoise("no_noise.txt");
     s.bootAll();
     s.addChannel(s.COMMAND_CHANNEL);
@@ -158,9 +158,13 @@ def main():
     
     s.testServer(1);
     s.runTime(60);
-
-    s.testClient(4);
-    s.runTime(10);
+    s.testServer(1);
+    #s.routeDMP(3);  
+    
+    s.testClient(4, 1);
+    s.runTime(20);
+    s.testClient(6, 1);
+    s.runTime(100);
     
     s.runTime(10);
 

@@ -14,8 +14,8 @@ implementation{
     RoutingTableEntry rTable[5];
     pack sendPackage;
     uint16_t MAX_COST = 65535;
-    uint16_t Neighbors[256];
-    uint16_t PrevLoss[256];
+    uint16_t Neighbors[31];
+    uint16_t PrevLoss[31];
     uint16_t i = 0;
     
     void makePack(pack *Package, uint16_t src, uint16_t dest, uint16_t TTL, uint16_t protocol, uint16_t seq, uint8_t* payload, uint8_t length){
@@ -28,7 +28,7 @@ implementation{
     }
     command void NeighborDiscovery.start(){
 		dbg( NEIGHBOR_CHANNEL, "Initializing Neighbor Discovery\n");
-        for(i = 0; i < 256; i++){
+        for(i = 0; i < 31; i++){
             Neighbors[i] = MAX_COST;
             PrevLoss[i] = MAX_COST;
         }
@@ -37,7 +37,7 @@ implementation{
 	}
     command void NeighborDiscovery.printNeighbor(){
         dbg(NEIGHBOR_CHANNEL, "I(%d) am printing neighbors\n", TOS_NODE_ID);
-        for(i = 0; i < 256; i++){
+        for(i = 0; i < 31; i++){
             if(PrevLoss[i] != MAX_COST){
                 dbg(NEIGHBOR_CHANNEL, "I(%d) am neighbors with %d with packet loss:%d\n", TOS_NODE_ID, i, PrevLoss[i]);
             }
@@ -45,7 +45,7 @@ implementation{
     }
     event void N_timer.fired(){
         RoutingTableEntry* T = (RoutingTableEntry *)(call RoutingTable.sendRoutingTable());
-        for(i = 0; i < 51; i++){
+        for(i = 0; i < 6; i++){
             uint8_t j = 0;
             for(j = 0; j < 5; j++){
                 rTable[j] = T[5*i + j+1];
@@ -57,7 +57,7 @@ implementation{
         call R_timer.startOneShot(100);
 	}
     event void R_timer.fired(){
-        for(i = 1; i < 256; i++){
+        for(i = 1; i < 31; i++){
             PrevLoss[i] = Neighbors[i];
             Neighbors[i] = MAX_COST;
         }
@@ -67,7 +67,7 @@ implementation{
         // dbg(NEIGHBOR_CHANNEL, "Receiving packet %d\n", msg->src);
         if (msg->protocol == PROTOCOL_PINGREPLY){
             if(Neighbors[msg->src] == MAX_COST){
-                Neighbors[msg->src] = 50;
+                Neighbors[msg->src] = 10;
             }
             Neighbors[msg->src]--;
             call RoutingTable.addNeighbor(msg->src, (Neighbors[msg->src] < PrevLoss[msg->src]) ? Neighbors[msg->src] : PrevLoss[msg->src]);

@@ -1,7 +1,7 @@
 #include "../../includes/channels.h"
 #include "../../includes/protocol.h"
 #include "../../includes/packet.h"
-#define MAX_ENTRIES 256
+#define MAX_ENTRIES 31
 
 module RoutingTableP {
     uses interface NeighborDiscovery;

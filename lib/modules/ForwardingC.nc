@@ -10,7 +10,7 @@ configuration ForwardingC{
 }
 
 implementation{
-    components RoutingTableC, ForwardingP; 
+    components RoutingTableC, ForwardingP, TransportC; 
 
     components new SimpleSendC(AM_FORWARDING);
     components new AMReceiverC(AM_FORWARDING);
@@ -21,6 +21,7 @@ implementation{
 
     ForwardingP.SimpleSend -> SimpleSendC;
     ForwardingP.Receive -> AMReceiverC.Receive;
+    ForwardingP.Transport -> TransportC;
 
 }
     
